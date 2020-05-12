@@ -8,8 +8,10 @@ package cdbblkstorage
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/golang/protobuf/proto"
+	"github.com/hyperledger/fabric/common/util/retry"
 	"github.com/hyperledger/fabric/core/ledger/util/couchdb"
 	"github.com/pkg/errors"
 )
@@ -46,7 +48,7 @@ func (cp *checkpoint) getCheckpointInfo() *checkpointInfo {
 
 //Get the current checkpoint information that is stored in the database
 func (cp *checkpoint) loadCurrentInfo() (*checkpointInfo, error) {
-	doc, _, err := cp.db.ReadDoc(blkMgrInfoKey)
+	doc, err := cp.readBlockchainInfo()
 	if err != nil {
 		return nil, errors.WithMessage(err, fmt.Sprintf("retrieval of checkpointInfo from couchDB failed [%s]", blkMgrInfoKey))
 	}
@@ -59,6 +61,29 @@ func (cp *checkpoint) loadCurrentInfo() (*checkpointInfo, error) {
 	}
 	logger.Debugf("loaded checkpointInfo:%s", checkpointInfo)
 	return checkpointInfo, nil
+}
+
+func (cp *checkpoint) readBlockchainInfo() (*couchdb.CouchDoc, error) {
+	// TODO: Make configurable
+	const maxAttempts = 5
+
+	doc, err := retry.Invoke(
+		func() (interface{}, error) {
+			doc, _, err := cp.db.ReadDoc(blkMgrInfoKey)
+			return doc, err
+		},
+		retry.WithMaxAttempts(maxAttempts),
+		retry.WithBeforeRetry(func(err error, attempt int, backoff time.Duration) bool {
+			logger.Infof("Got error reading blockchain info in DB [%s] on attempt %d. Will retry in %s: %s", cp.db.DBName, attempt, backoff, err)
+			return true
+		}),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return doc.(*couchdb.CouchDoc), nil
 }
 
 func (cp *checkpoint) saveCurrentInfo(i *checkpointInfo) error {
