@@ -21,6 +21,8 @@ import (
 	"github.com/hyperledger/fabric/gossip/protoext"
 	"github.com/hyperledger/fabric/gossip/util"
 	"github.com/pkg/errors"
+	"github.com/trustbloc/fabric-peer-ext/pkg/gossip/appdata"
+	"github.com/trustbloc/fabric-peer-ext/pkg/validation/validationhandler"
 
 	"github.com/trustbloc/fabric-peer-ext/pkg/common/txflags"
 	"github.com/trustbloc/fabric-peer-ext/pkg/gossip/state"
@@ -126,6 +128,20 @@ func (s *gossipStateProviderExtension) AddPayload(handle func(payload *proto.Pay
 		if !roles.IsCommitter() && !isBlockValidated(block) {
 			logger.Debugf("[%s] I'm not a committer so will not add payload for unvalidated block [%d]", s.chainID, block.Header.Number)
 			return nil
+		}
+
+		if roles.IsCommitter() {
+			// TODO: Send an app-data request to validating peers -- only in my own org -- to start validating the block
+			// Use PolicyEvaluator to get the set of peers that will be involved in validation of the block. If no peers from
+			// my own org are involved then don't send any message. We don't want all committers in each org to send the same block
+			// the the same validators ???
+			// The peers that get the validation request will broadcast a response to all committing peers (according to policy)
+			go func() {
+				response, err := appdata.Retrieve(&validationhandler.ValidationRequest{
+					Payload: payload,
+				})
+				s.resultsChan <- response
+			}()
 		}
 
 		logger.Debugf("[%s] Adding payload for sequence [%d]", s.chainID, payload.SeqNum)

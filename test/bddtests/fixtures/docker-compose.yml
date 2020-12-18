@@ -140,6 +140,7 @@ services:
       - COUCHDB_PASSWORD=secret
     volumes:
       - ${COMPOSE_DIR}/config/couchDB/config.ini:/opt/couchdb/etc/local.d/config.ini
+      - /Volumes/ramdisk/docker-data/couchdb:/opt/couchdb/data
 
  # builder is only here to create a dependency on the image (not used as part of compose)
   builder:
