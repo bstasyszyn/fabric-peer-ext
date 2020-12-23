@@ -15,15 +15,16 @@ import (
 	"github.com/hyperledger/fabric/core/ledger"
 	"github.com/hyperledger/fabric/extensions/gossip/api"
 	"github.com/hyperledger/fabric/extensions/gossip/blockpublisher"
-	"github.com/hyperledger/fabric/extensions/roles"
 	common2 "github.com/hyperledger/fabric/gossip/common"
 	"github.com/hyperledger/fabric/gossip/discovery"
 	"github.com/hyperledger/fabric/gossip/protoext"
 	"github.com/hyperledger/fabric/gossip/util"
 	"github.com/pkg/errors"
-
 	"github.com/trustbloc/fabric-peer-ext/pkg/common/txflags"
+	"github.com/trustbloc/fabric-peer-ext/pkg/config"
 	"github.com/trustbloc/fabric-peer-ext/pkg/gossip/state"
+	"github.com/trustbloc/fabric-peer-ext/pkg/roles"
+	vcommon "github.com/trustbloc/fabric-peer-ext/pkg/validation/common"
 )
 
 var logger = flogging.MustGetLogger("ext_gossip_state")
@@ -69,24 +70,30 @@ type GossipServiceMediator interface {
 //NewGossipStateProviderExtension returns new GossipStateProvider Extension implementation
 func NewGossipStateProviderExtension(chainID string, mediator GossipServiceMediator, support *api.Support, blockingMode bool) GossipStateProviderExtension {
 	return &gossipStateProviderExtension{
-		chainID:      chainID,
-		mediator:     mediator,
-		support:      support,
-		blockingMode: blockingMode,
+		chainID:                      chainID,
+		mediator:                     mediator,
+		support:                      support,
+		blockingMode:                 blockingMode,
+		distributedValidationEnabled: config.IsDistributedValidationEnabled(),
 	}
 }
 
 type gossipStateProviderExtension struct {
-	chainID      string
-	mediator     GossipServiceMediator
-	support      *api.Support
-	blockingMode bool
+	chainID                      string
+	mediator                     GossipServiceMediator
+	support                      *api.Support
+	blockingMode                 bool
+	distributedValidationEnabled bool
 }
 
 func (s *gossipStateProviderExtension) HandleStateRequest(handle func(msg protoext.ReceivedMessage)) func(msg protoext.ReceivedMessage) {
 	return func(msg protoext.ReceivedMessage) {
-		if roles.IsEndorser() {
+		// TODO: Changed this code to only select committers for now because of issue: https://github.com/trustbloc/fabric-peer-ext/issues/547
+		if roles.IsCommitter() {
+			logger.Infof("[%s] Handling state request since I'm a committer]", s.chainID)
 			handle(msg)
+		} else {
+			logger.Infof("[%s] Not handling state request since I'm not a committer]", s.chainID)
 		}
 	}
 }
@@ -95,11 +102,12 @@ func (s *gossipStateProviderExtension) Predicate(handle func(peer discovery.Netw
 	return func(peer discovery.NetworkMember) bool {
 		canPredicate := handle(peer)
 		if canPredicate {
-			if len(peer.Properties.Roles) == 0 || roles.HasEndorserRole(peer.Properties.Roles) {
-				logger.Debugf("Choosing [%s] since it's an endorser", peer.Endpoint)
+			// TODO: Changed this code to only select committers for now because of issue: https://github.com/trustbloc/fabric-peer-ext/issues/547
+			if len(peer.Properties.Roles) == 0 || roles.FromStrings(peer.Properties.Roles...).Contains(roles.CommitterRole) {
+				logger.Debugf("Choosing [%s] since it's a committer", peer.Endpoint)
 				return true
 			}
-			logger.Debugf("Not choosing [%s] since it's not an endorser", peer.Endpoint)
+			logger.Debugf("Not choosing [%s] since it's not a committer", peer.Endpoint)
 			return false
 		}
 		return false
@@ -123,9 +131,26 @@ func (s *gossipStateProviderExtension) AddPayload(handle func(payload *proto.Pay
 			return errors.Errorf("block with sequence %d has no header (%v) or data (%v)", payload.SeqNum, block.Header, block.Data)
 		}
 
-		if !roles.IsCommitter() && !isBlockValidated(block) {
-			logger.Debugf("[%s] I'm not a committer so will not add payload for unvalidated block [%d]", s.chainID, block.Header.Number)
-			return nil
+		if !roles.IsCommitter() {
+			if !isBlockValidated(block) {
+				logger.Debugf("[%s] I'm not a committer so will not add payload for unvalidated block [%d]", s.chainID, block.Header.Number)
+
+				return nil
+			}
+
+			// CancelContextForBlock any outstanding validation for the current block being committed
+			vmInstance.cancelValidation(s.chainID, payload.SeqNum)
+
+			if s.distributedValidationEnabled && roles.IsValidator() {
+				// Validate any pending request for the next block
+				vmInstance.validatePending(s.chainID, payload.SeqNum+1)
+			}
+		}
+
+		if s.distributedValidationEnabled && roles.IsCommitter() {
+			logger.Debugf("[%s] Sending validation request to other validating peers", s.chainID)
+
+			vmInstance.sendValidateRequest(s.chainID, &vcommon.ValidationRequest{Block: block, BlockBytes: payload.Data})
 		}
 
 		logger.Debugf("[%s] Adding payload for sequence [%d]", s.chainID, payload.SeqNum)
@@ -208,7 +233,7 @@ func (s *gossipStateProviderExtension) gossipBlockAndPrivateData(blockAndPvtData
 		logger.Errorf("[%s] Error serializing pvtDataCollections with block number %d, due to %s", s.chainID, blockNum, err)
 	}
 
-	// Create payload with a block received
+	// ContextForBlock payload with a block received
 	payload := &proto.Payload{
 		SeqNum:      blockNum,
 		Data:        marshaledBlock,

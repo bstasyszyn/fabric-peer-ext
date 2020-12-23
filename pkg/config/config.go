@@ -89,6 +89,11 @@ const (
 
 	defaultStateCacheGossipTimeout = 500 * time.Millisecond
 	defaultStateCacheRetentionSize = 20
+
+	confDistributedValidationEnabled = "peer.validation.distributed"
+	confValidationWaitTime           = "peer.validation.waitTime"
+
+	defaultValidationWaitTime = 50 * time.Millisecond
 )
 
 // DBType is the database type
@@ -362,4 +367,19 @@ func GetStateCacheRetentionSize() int {
 // would still be performed during validation.
 func IsSkipCheckForDupTxnID() bool {
 	return viper.GetBool(confSkipCheckForDupTxnID)
+}
+
+// IsDistributedValidationEnabled returns true if distributed block validation is enabled.
+func IsDistributedValidationEnabled() bool {
+	return viper.GetBool(confDistributedValidationEnabled)
+}
+
+// GetValidationWaitTime is used by the committer in distributed validation and is the minimum
+// time to wait for Tx validation responses from other validators.
+func GetValidationWaitTime() time.Duration {
+	timeout := viper.GetDuration(confValidationWaitTime)
+	if timeout == 0 {
+		return defaultValidationWaitTime
+	}
+	return timeout
 }

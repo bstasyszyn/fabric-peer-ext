@@ -189,7 +189,7 @@ func TestDCASClient_Get(t *testing.T) {
 	})
 
 	t.Run("Get protobuf - success", func(t *testing.T) {
-		// Create a protobuf file with two links
+		// ContextForBlock a protobuf file with two links
 		pbValue1 := []byte(fmt.Sprintf(`{"data":"","links":[{"Cid":{"/":"%s"}},{"Cid":{"/":"%s"}}]}`, cidFile1, cidFile2))
 
 		cID, err := c.Put(bytes.NewReader(pbValue1), WithNodeType(ObjectNodeType), WithInputEncoding(JSONEncoding), WithFormat(ProtobufFormat))

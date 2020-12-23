@@ -8,7 +8,9 @@ package peer
 
 import (
 	"github.com/hyperledger/fabric/common/flogging"
+	"github.com/hyperledger/fabric/extensions/gossip/state"
 	storagecouchdb "github.com/hyperledger/fabric/extensions/storage/couchdb"
+	"github.com/trustbloc/fabric-peer-ext/pkg/validation/validationctx"
 
 	"github.com/trustbloc/fabric-peer-ext/cmd/chaincode/configcc"
 	ccnotifier "github.com/trustbloc/fabric-peer-ext/pkg/chaincode/notifier"
@@ -31,6 +33,9 @@ import (
 	extstatedb "github.com/trustbloc/fabric-peer-ext/pkg/statedb"
 	"github.com/trustbloc/fabric-peer-ext/pkg/txn"
 	"github.com/trustbloc/fabric-peer-ext/pkg/txn/proprespvalidator"
+	"github.com/trustbloc/fabric-peer-ext/pkg/validation/validationhandler"
+	policyretriever "github.com/trustbloc/fabric-peer-ext/pkg/validation/validationpolicy/retriever"
+	"github.com/trustbloc/fabric-peer-ext/pkg/validation/validator"
 )
 
 var logger = flogging.MustGetLogger("ext_peer")
@@ -68,6 +73,11 @@ func registerResources() {
 	resource.Register(ccnotifier.New)
 	resource.Register(extstatedb.GetProvider)
 	resource.Register(newDCASConfig)
+	resource.Register(validator.NewProvider)
+	resource.Register(validationhandler.NewProvider)
+	resource.Register(policyretriever.NewProvider)
+	resource.Register(state.InitValidationMgr)
+	resource.Register(validationctx.NewProvider)
 }
 
 func registerChaincodes() {

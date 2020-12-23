@@ -207,7 +207,7 @@ func TestMain(m *testing.M) {
 
 	viper.Set("peer.fileSystemPath", "/tmp/fabric/core/ledger/pvtdatastore")
 
-	// Create CouchDB definition from config parameters
+	// ContextForBlock CouchDB definition from config parameters
 	couchDBConfig = xtestutil.TestLedgerConf().StateDBConfig.CouchDB
 
 	code := m.Run()

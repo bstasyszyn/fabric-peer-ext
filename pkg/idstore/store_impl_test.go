@@ -36,7 +36,7 @@ func TestMain(m *testing.M) {
 	_, _, destroy = xtestutil.SetupExtTestEnv()
 	defer destroy()
 
-	// Create CouchDB definition from config parameters
+	// ContextForBlock CouchDB definition from config parameters
 	couchDBConfig = xtestutil.TestLedgerConf().StateDBConfig.CouchDB
 
 	code := m.Run()
