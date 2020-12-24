@@ -25,7 +25,7 @@ import (
 // PeerFilter returns true to include the peer in the Gossip request
 type PeerFilter = func(*extdiscovery.Member) bool
 
-// ResponseHandler handles the response to retrieved data
+// ResponseHandler handles the Response to retrieved data
 type ResponseHandler func(response []byte) (extcommon.Values, error)
 
 // AllSet returns true if all of the values have been set
@@ -143,7 +143,7 @@ func (r *Retriever) Retrieve(ctxt context.Context, request *Request, responseHan
 			break
 		}
 
-		logger.Infof("[%s] Could not get all values on attempt %d for %s. Got: %s", r.ChannelID(), attempt, request.Payload, values)
+		logger.Infof("[%s] Could not get all values on attempt %d", r.ChannelID(), attempt)
 	}
 
 	return values, nil
@@ -174,7 +174,7 @@ func (r *Retriever) getData(ctxt context.Context, request *Request, peer *extdis
 
 	r.Send(r.createAppDataRequestMsg(request, req.ID()), asRemotePeer(peer))
 
-	logger.Debugf("[%s] Waiting for response from peer [%s] to request %d", r.ChannelID(), peer, req.ID())
+	logger.Debugf("[%s] Waiting for Response from peer [%s] to request %d", r.ChannelID(), peer, req.ID())
 	res, err := req.GetResponse(ctxt)
 	if err != nil {
 		return nil, err
@@ -182,7 +182,7 @@ func (r *Retriever) getData(ctxt context.Context, request *Request, peer *extdis
 
 	data := res.Data.([]byte)
 
-	logger.Debugf("[%s] Got response from peer [%s] to request %d: %s", r.ChannelID(), peer, req.ID(), data)
+	logger.Debugf("[%s] Got Response from peer [%s] to request %d: %s", r.ChannelID(), peer, req.ID(), data)
 
 	return handleResponse(data)
 }

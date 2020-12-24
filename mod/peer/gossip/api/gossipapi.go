@@ -8,6 +8,7 @@ package api
 
 import (
 	cb "github.com/hyperledger/fabric-protos-go/common"
+	db "github.com/hyperledger/fabric-protos-go/discovery"
 	proto "github.com/hyperledger/fabric-protos-go/gossip"
 	"github.com/hyperledger/fabric-protos-go/ledger/rwset/kvrwset"
 	pb "github.com/hyperledger/fabric-protos-go/peer"
@@ -142,4 +143,9 @@ type GossipService interface {
 	// DistributePrivateData distributes private data to the peers in the collections
 	// according to policies induced by the PolicyStore and PolicyParser
 	DistributePrivateData(chainID string, txID string, privateData *transientstore.TxPvtReadWriteSetWithConfigInfo, blkHt uint64) error
+}
+
+type PeerPolicyDescriptor struct {
+	PeersByGroups map[string]*db.Peers
+	Layouts       []*db.Layout
 }

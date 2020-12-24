@@ -85,7 +85,7 @@ func newCDBBlockStore(blockStore *couchdb.CouchDatabase, txnStore *couchdb.Couch
 	// Update the manager with the checkpoint info and the file writer
 	cdbBlockStore.cpInfo = cpInfo
 
-	// Create a checkpoint condition (event) variable, for the  goroutine waiting for
+	// ContextForBlock a checkpoint condition (event) variable, for the  goroutine waiting for
 	// or announcing the occurrence of an event.
 	cdbBlockStore.cpInfoCond = sync.NewCond(&sync.Mutex{})
 

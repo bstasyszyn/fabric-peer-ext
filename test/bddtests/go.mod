@@ -18,6 +18,7 @@ require (
 	golang.org/x/net v0.0.0-20190620200207-3b0461eec859 // indirect
 )
 
-replace github.com/hyperledger/fabric-protos-go => github.com/trustbloc/fabric-protos-go-ext v0.1.5
+//replace github.com/hyperledger/fabric-protos-go => github.com/trustbloc/fabric-protos-go-ext v0.1.5
+replace github.com/hyperledger/fabric-protos-go => github.com/bstasyszyn/fabric-protos-go-ext v0.0.0-20201209143348-0ae5075fccb6
 
 go 1.14

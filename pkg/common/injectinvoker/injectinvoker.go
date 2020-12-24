@@ -95,7 +95,7 @@ func (inv *Invoker) getProviderForInterface(t reflect.Type) (reflect.Value, erro
 }
 
 func (inv *Invoker) getProviderForStruct(t reflect.Type) (reflect.Value, error) {
-	// Create an instance of the struct
+	// ContextForBlock an instance of the struct
 	inst := reflect.New(t).Elem()
 	err := inv.populateFields(t, inst)
 	if err != nil {
@@ -105,7 +105,7 @@ func (inv *Invoker) getProviderForStruct(t reflect.Type) (reflect.Value, error) 
 }
 
 func (inv *Invoker) getProviderForStructPtr(tPtr reflect.Type) (reflect.Value, error) {
-	// Create an instance of the struct
+	// ContextForBlock an instance of the struct
 	instPtr := reflect.New(tPtr.Elem())
 	err := inv.populateFields(tPtr.Elem(), instPtr.Elem())
 	if err != nil {

@@ -102,7 +102,7 @@ func TestTransientStorePersistAndRetrieve(t *testing.T) {
 	txid := "txid-1"
 	samplePvtRWSetWithConfig := samplePvtData(t)
 
-	// Create private simulation results for txid-1
+	// ContextForBlock private simulation results for txid-1
 	var endorsersResults []*origts.EndorserPvtSimulationResults
 
 	// Results produced by endorser 1
@@ -156,12 +156,12 @@ func TestTransientStorePersistAndRetrieveBothOldAndNewProto(t *testing.T) {
 	txid := "txid-1"
 	var receivedAtBlockHeight uint64 = 10
 
-	// Create and persist private simulation results with old proto for txid-1
+	// ContextForBlock and persist private simulation results with old proto for txid-1
 	samplePvtRWSet := samplePvtData(t)
 	err = testStore.Persist(txid, receivedAtBlockHeight, samplePvtRWSet)
 	assert.NoError(err)
 
-	// Create and persist private simulation results with new proto for txid-1
+	// ContextForBlock and persist private simulation results with new proto for txid-1
 	samplePvtRWSetWithConfig := samplePvtData(t)
 	err = testStore.Persist(txid, receivedAtBlockHeight, samplePvtRWSetWithConfig)
 	assert.NoError(err)
@@ -213,7 +213,7 @@ func TestTransientStorePurgeByTxids(t *testing.T) {
 
 	samplePvtRWSetWithConfig := samplePvtData(t)
 
-	// Create two private write set entry for txid-1
+	// ContextForBlock two private write set entry for txid-1
 	txids = append(txids, "txid-1")
 	endorser0SimulationResults := &origts.EndorserPvtSimulationResults{
 		ReceivedAtBlockHeight:          10,
@@ -228,7 +228,7 @@ func TestTransientStorePurgeByTxids(t *testing.T) {
 	}
 	endorsersResults = append(endorsersResults, endorser1SimulationResults)
 
-	// Create one private write set entry for txid-2
+	// ContextForBlock one private write set entry for txid-2
 	txids = append(txids, "txid-2")
 	endorser2SimulationResults := &origts.EndorserPvtSimulationResults{
 		ReceivedAtBlockHeight:          11,
@@ -236,7 +236,7 @@ func TestTransientStorePurgeByTxids(t *testing.T) {
 	}
 	endorsersResults = append(endorsersResults, endorser2SimulationResults)
 
-	// Create three private write set entry for txid-3
+	// ContextForBlock three private write set entry for txid-3
 	txids = append(txids, "txid-3")
 	endorser3SimulationResults := &origts.EndorserPvtSimulationResults{
 		ReceivedAtBlockHeight:          12,
@@ -378,7 +378,7 @@ func TestTransientStorePurgeByHeight(t *testing.T) {
 	txid := "txid-1"
 	samplePvtRWSetWithConfig := samplePvtData(t)
 
-	// Create private simulation results for txid-1
+	// ContextForBlock private simulation results for txid-1
 	var endorsersResults []*origts.EndorserPvtSimulationResults
 
 	// Results produced by endorser 1

@@ -197,7 +197,7 @@ func TestRetriever(t *testing.T) {
 		assert.Nil(t, value)
 	})
 
-	t.Run("GetData - Cancel request from remote peer", func(t *testing.T) {
+	t.Run("GetData - CancelContextForBlock request from remote peer", func(t *testing.T) {
 		gossip.MessageHandler(func(msg *gproto.GossipMessage) {})
 
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

@@ -20,6 +20,7 @@ import (
 	"github.com/trustbloc/fabric-peer-ext/pkg/mocks"
 	"github.com/trustbloc/fabric-peer-ext/pkg/resource"
 	txnmocks "github.com/trustbloc/fabric-peer-ext/pkg/txn/mocks"
+	valmocks "github.com/trustbloc/fabric-peer-ext/pkg/validation/validationpolicy/mocks"
 )
 
 func TestInitialize(t *testing.T) {
@@ -42,6 +43,7 @@ func TestInitialize(t *testing.T) {
 		&mocks.ChaincodeUpdateHandler{},
 		&txnmocks.LifecycleCCInfoProvider{},
 		&mocks.ACLProvider{},
+		&valmocks.MockValidatorDiscovery{},
 	))
 
 	ucc.WaitForReady()

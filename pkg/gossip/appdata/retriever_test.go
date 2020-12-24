@@ -95,7 +95,7 @@ func TestRetriever(t *testing.T) {
 	response := &requestmgr.Response{
 		Endpoint: "peer1",
 		MSPID:    "msp1",
-		Data:     []byte("response"),
+		Data:     []byte("Response"),
 	}
 
 	go func() {

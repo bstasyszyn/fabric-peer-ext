@@ -7,6 +7,7 @@ module github.com/trustbloc/fabric-peer-ext
 require (
 	github.com/bluele/gcache v0.0.0-20190301044115-79ae3b2d8680
 	github.com/btcsuite/btcutil v0.0.0-20190425235716-9e5f4b9a998d
+	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/golang/protobuf v1.3.3
 	github.com/hyperledger/fabric v2.0.0+incompatible
 	github.com/hyperledger/fabric-chaincode-go v0.0.0-20200128192331-2d899240a7ed
@@ -26,6 +27,7 @@ require (
 	github.com/ipfs/go-unixfs v0.2.4
 	github.com/multiformats/go-multihash v0.0.14
 	github.com/pkg/errors v0.9.1
+	github.com/spf13/viper v1.1.1
 	github.com/spf13/viper2015 v1.3.2
 	github.com/stretchr/testify v1.6.1
 	github.com/syndtr/goleveldb v1.0.1-0.20190625010220-02440ea7a285
@@ -34,13 +36,14 @@ require (
 	google.golang.org/grpc v1.29.1
 )
 
-replace github.com/hyperledger/fabric => github.com/trustbloc/fabric-mod v0.1.5
+replace github.com/hyperledger/fabric => github.com/bstasyszyn/fabric-mod v0.0.0-20201222161848-39d8b4fadcd8
 
 replace github.com/hyperledger/fabric/extensions => ./mod/peer
 
 replace github.com/trustbloc/fabric-peer-ext => ./
 
-replace github.com/hyperledger/fabric-protos-go => github.com/trustbloc/fabric-protos-go-ext v0.1.5
+//replace github.com/hyperledger/fabric-protos-go => github.com/trustbloc/fabric-protos-go-ext v0.1.5
+replace github.com/hyperledger/fabric-protos-go => github.com/bstasyszyn/fabric-protos-go-ext v0.0.0-20201209143348-0ae5075fccb6
 
 replace github.com/spf13/viper2015 => github.com/spf13/viper v0.0.0-20150908122457-1967d93db724
 

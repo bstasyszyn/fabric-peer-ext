@@ -157,7 +157,7 @@ func TestTransientDataProvider(t *testing.T) {
 		assert.Nil(t, value)
 	})
 
-	t.Run("GetTransientData - Cancel request from remote peer", func(t *testing.T) {
+	t.Run("GetTransientData - CancelContextForBlock request from remote peer", func(t *testing.T) {
 		gossip.MessageHandler(func(msg *gproto.GossipMessage) {})
 
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

@@ -175,7 +175,7 @@ func TestPersistTransientStoreParallel(t *testing.T) {
 	require.NotNil(t, tStore.txidCache, "Transient store's cache should not be nil")
 
 	samplePvtRWSetWithConfig := samplePvtData(t)
-	// Create two private write set entry for txid-1
+	// ContextForBlock two private write set entry for txid-1
 	endorser0SimulationResults := &origts.EndorserPvtSimulationResults{
 		ReceivedAtBlockHeight:          10,
 		PvtSimulationResultsWithConfig: samplePvtRWSetWithConfig,
@@ -186,13 +186,13 @@ func TestPersistTransientStoreParallel(t *testing.T) {
 		PvtSimulationResultsWithConfig: samplePvtRWSetWithConfig,
 	}
 
-	// Create one private write set entry for txid-2
+	// ContextForBlock one private write set entry for txid-2
 	endorser2SimulationResults := &origts.EndorserPvtSimulationResults{
 		ReceivedAtBlockHeight:          11,
 		PvtSimulationResultsWithConfig: samplePvtRWSetWithConfig,
 	}
 
-	// Create three private write set entry for txid-3
+	// ContextForBlock three private write set entry for txid-3
 	endorser3SimulationResults := &origts.EndorserPvtSimulationResults{
 		ReceivedAtBlockHeight:          12,
 		PvtSimulationResultsWithConfig: samplePvtRWSetWithConfig,
@@ -213,7 +213,7 @@ func TestPersistTransientStoreParallel(t *testing.T) {
 		txid        string
 		blockHeight uint64
 	}{
-		// Create two private write set entry for txid-1
+		// ContextForBlock two private write set entry for txid-1
 		{
 			endorser0SimulationResults,
 			"txid-1",
@@ -224,13 +224,13 @@ func TestPersistTransientStoreParallel(t *testing.T) {
 			"txid-1",
 			11,
 		},
-		// Create one private write set entry for txid-2
+		// ContextForBlock one private write set entry for txid-2
 		{
 			endorser2SimulationResults,
 			"txid-2",
 			11,
 		},
-		// Create three private write set entry for txid-3
+		// ContextForBlock three private write set entry for txid-3
 		{
 			endorser3SimulationResults,
 			"txid-3",
@@ -249,7 +249,7 @@ func TestPersistTransientStoreParallel(t *testing.T) {
 	}
 	for _, tt := range tcCreate {
 		tt := tt
-		t.Run(fmt.Sprintf("Testing parallel Create pvt transient data for txid: %s and block height: %d", tt.txid, tt.blockHeight), func(st *testing.T) {
+		t.Run(fmt.Sprintf("Testing parallel ContextForBlock pvt transient data for txid: %s and block height: %d", tt.txid, tt.blockHeight), func(st *testing.T) {
 			st.Parallel()
 			err := tStore.Persist(tt.txid, tt.pvtrwSet.ReceivedAtBlockHeight,
 				tt.pvtrwSet.PvtSimulationResultsWithConfig)
@@ -272,7 +272,7 @@ func TestIterateTransientStoreParallel(t *testing.T) {
 	require.NotNil(t, tStore.txidCache, "Transient store's cache should not be nil")
 
 	samplePvtRWSetWithConfig := samplePvtData(t)
-	// Create two private write set entry for txid-1
+	// ContextForBlock two private write set entry for txid-1
 	endorser0SimulationResults := &origts.EndorserPvtSimulationResults{
 		ReceivedAtBlockHeight:          10,
 		PvtSimulationResultsWithConfig: samplePvtRWSetWithConfig,
@@ -283,13 +283,13 @@ func TestIterateTransientStoreParallel(t *testing.T) {
 		PvtSimulationResultsWithConfig: samplePvtRWSetWithConfig,
 	}
 
-	// Create one private write set entry for txid-2
+	// ContextForBlock one private write set entry for txid-2
 	endorser2SimulationResults := &origts.EndorserPvtSimulationResults{
 		ReceivedAtBlockHeight:          11,
 		PvtSimulationResultsWithConfig: samplePvtRWSetWithConfig,
 	}
 
-	// Create three private write set entry for txid-3
+	// ContextForBlock three private write set entry for txid-3
 	endorser3SimulationResults := &origts.EndorserPvtSimulationResults{
 		ReceivedAtBlockHeight:          12,
 		PvtSimulationResultsWithConfig: samplePvtRWSetWithConfig,
@@ -310,7 +310,7 @@ func TestIterateTransientStoreParallel(t *testing.T) {
 		txid        string
 		blockHeight uint64
 	}{
-		// Create two private write set entry for txid-1
+		// ContextForBlock two private write set entry for txid-1
 		{
 			endorser0SimulationResults,
 			"txid-1",
@@ -321,13 +321,13 @@ func TestIterateTransientStoreParallel(t *testing.T) {
 			"txid-1",
 			11,
 		},
-		// Create one private write set entry for txid-2
+		// ContextForBlock one private write set entry for txid-2
 		{
 			endorser2SimulationResults,
 			"txid-2",
 			11,
 		},
-		// Create three private write set entry for txid-3
+		// ContextForBlock three private write set entry for txid-3
 		{
 			endorser3SimulationResults,
 			"txid-3",
