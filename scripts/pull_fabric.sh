@@ -7,12 +7,12 @@
 set -e
 
 mkdir -p $GOPATH/src/github.com/hyperledger/fabric
-git clone https://github.com/trustbloc/fabric-mod.git $GOPATH/src/github.com/hyperledger/fabric
+git clone https://github.com/bstasyszyn/fabric-mod.git $GOPATH/src/github.com/hyperledger/fabric
 cp -r . $GOPATH/src/github.com/hyperledger/fabric/fabric-peer-ext
 cd $GOPATH/src/github.com/hyperledger/fabric
 git config advice.detachedHead false
-# fabric-mod (Jan 8, 2021)
-git checkout 8b87450ce0f44bea81debed1d0caad029d11d66d
+# fabric-mod (Feb 9, 2021)
+git checkout 723ba1bb19923a3d9a36a49617af925a20b425c4
 
 declare envOS
 envOS=$(uname -s)
